@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de UP — Naruto Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b1712;
+    --paper:#f4ecdb;
+    --scroll:#e9dfc6;
+    --scroll-line:#cdbf9a;
+    --chakra:#e8641f;
+    --chakra-dark:#a8440f;
+    --jade:#2f8f63;
+    --jade-bg:#dcefe3;
+    --alert:#c23b3b;
+    --alert-bg:#f6dede;
+    --muted:#7a7264;
+    --card:#fffaf0;
+    --shadow:0 1px 0 rgba(0,0,0,0.06);
+    --radius:10px;
+  }
+  [data-theme="dark"]{
+    --ink:#efe6d4;
+    --paper:#171310;
+    --scroll:#231d16;
+    --scroll-line:#3a3126;
+    --chakra:#ff8a3d;
+    --chakra-dark:#ffb27a;
+    --jade:#4fce97;
+    --jade-bg:#173025;
+    --alert:#ff7373;
+    --alert-bg:#341616;
+    --muted:#a89b84;
+    --card:#211b14;
+    --shadow:0 1px 0 rgba(0,0,0,0.3);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    transition:background .25s ease, color .25s ease;
+    padding-bottom:4rem;
+  }
+  .wrap{max-width:840px;margin:0 auto;padding:0 20px;}
+  header{
+    padding:2.4rem 0 1.6rem;
+    border-bottom:2px solid var(--scroll-line);
+    margin-bottom:2rem;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:1rem;
+  }
+  h1{
+    font-family:'Yuji Syuku',serif;
+    font-size:2.1rem;
+    margin:0 0 .25rem;
+    letter-spacing:.5px;
+    color:var(--chakra-dark);
+  }
+  header p{margin:0;color:var(--muted);font-size:.92rem;}
+  .theme-toggle{
+    border:1.5px solid var(--scroll-line);
+    background:var(--card);
+    color:var(--ink);
+    border-radius:999px;
+    padding:.5rem 1.1rem;
+    font-size:.85rem;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .theme-toggle:hover{border-color:var(--chakra);}
+  section{margin-bottom:2.6rem;}
+  .section-head{
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+    margin-bottom:.3rem;
+  }
+  .seal{
+    width:30px;height:30px;border-radius:50%;
+    border:2px solid var(--chakra);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Yuji Syuku',serif;color:var(--chakra);font-size:.95rem;
+    flex-shrink:0;
+  }
+  h2{font-family:'Yuji Syuku',serif;font-size:1.35rem;margin:0;font-weight:400;}
+  .section-desc{color:var(--muted);font-size:.85rem;margin:.2rem 0 1rem 40px;}
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  th{
+    text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--muted);font-weight:600;padding:.6rem .5rem;border-bottom:1.5px solid var(--scroll-line);
+  }
+  td{padding:.35rem .5rem;border-bottom:1px solid var(--scroll-line);}
+  tr:last-child td{border-bottom:none;}
+  input, select{
+    width:100%;
+    background:transparent;
+    border:1px solid transparent;
+    border-radius:6px;
+    padding:.4rem .45rem;
+    font-size:.88rem;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  input:hover, select:hover{border-color:var(--scroll-line);}
+  input:focus, select:focus{outline:none;border-color:var(--chakra);background:var(--paper);}
+  input[type=number]{text-align:right;}
+  .row-actions{width:36px;text-align:center;}
+  .icon-btn{
+    background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;line-height:1;padding:.2rem;
+  }
+  .icon-btn:hover{color:var(--alert);}
+  .add-row{
+    margin-top:.7rem;
+    background:none;
+    border:1.5px dashed var(--scroll-line);
+    color:var(--muted);
+    border-radius:var(--radius);
+    padding:.55rem;
+    width:100%;
+    cursor:pointer;
+    font-size:.85rem;
+  }
+  .add-row:hover{border-color:var(--chakra);color:var(--chakra);}
+  .cb-list{display:flex;flex-direction:column;gap:.5rem;}
+  .cb-card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:.85rem 1rem;display:flex;align-items:center;gap:1rem;
+  }
+  .cb-rank{
+    font-family:'Yuji Syuku',serif;font-size:1.3rem;color:var(--chakra);width:1.6rem;text-align:center;flex-shrink:0;
+  }
+  .cb-info{flex:1;min-width:0;}
+  .cb-title{font-weight:600;font-size:.95rem;}
+  .cb-sub{font-size:.78rem;color:var(--muted);margin-top:1px;}
+  .cb-ratio{
+    font-size:1.1rem;font-weight:700;color:var(--jade);white-space:nowrap;
+  }
+  .cb-ratio span{display:block;font-size:.68rem;color:var(--muted);font-weight:400;text-align:right;}
+  .empty{color:var(--muted);font-size:.85rem;padding:1rem;text-align:center;}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;}
+  @media (max-width:680px){.cols2{grid-template-columns:1fr;}}
+  .balance-pos{color:var(--jade);font-weight:600;}
+  .balance-neg{color:var(--alert);font-weight:600;}
+  .divider{
+    height:14px;margin:0 0 2.4rem;
+    background-image:repeating-linear-gradient(-45deg, var(--scroll-line) 0 8px, transparent 8px 16px);
+    opacity:.4;border-radius:2px;
+  }
+  footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:3rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>Calculadora de UP</h1>
+    <p>Naruto Online — organize seus recursos e veja onde vale mais a pena upar</p>
+  </div>
+  <button class="theme-toggle" id="themeBtn">🌙 Modo escuro</button>
+</header>
+
+<section>
+  <div class="section-head"><div class="seal">壱</div><h2>Base de dados</h2></div>
+  <p class="section-desc">Cadastre, por sistema e faixa de upgrade, quanto de recurso é preciso, o custo em Pack de FC e o ganho de 1º Atk. Se uma faixa pede dois recursos, adicione uma linha para cada um.</p>
+  <table>
+    <thead><tr>
+      <th>Sistema</th><th>UP (faixa)</th><th>Recurso</th><th>Qtd necessária</th><th>Pack de FC</th><th>Ganho 1º atk</th><th></th>
+    </tr></thead>
+    <tbody id="dadosBody"></tbody>
+  </table>
+  <button class="add-row" id="addDados">+ adicionar linha</button>
+</section>
+
+<div class="divider"></div>
+
+<section>
+  <div class="section-head"><div class="seal">弐</div><h2>Custo x benefício</h2></div>
+  <p class="section-desc">Gerado sozinho a partir da base de dados, ordenado do que rende mais 1º atk por Pack de FC gasto.</p>
+  <div class="cb-list" id="cbList"></div>
+</section>
+
+<div class="divider"></div>
+
+<section>
+  <div class="section-head"><div class="seal">参</div><h2>Saldo</h2></div>
+  <p class="section-desc">O que você tem guardado vs. o que pretende gastar upando.</p>
+  <div class="cols2">
+    <div>
+      <h3 style="font-size:.9rem;margin:0 0 .5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">O que você tem</h3>
+      <table>
+        <thead><tr><th>Sistema</th><th>Recurso</th><th>Qtd</th><th></th></tr></thead>
+        <tbody id="saldoBody"></tbody>
+      </table>
+      <button class="add-row" id="addSaldo">+ adicionar recurso</button>
+    </div>
+    <div>
+      <h3 style="font-size:.9rem;margin:0 0 .5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Upgrades planejados</h3>
+      <table>
+        <thead><tr><th>Sistema / UP</th><th>Recurso</th><th>Qtd de UPs</th><th>Saldo final</th><th></th></tr></thead>
+        <tbody id="planoBody"></tbody>
+      </table>
+      <button class="add-row" id="addPlano">+ adicionar upgrade</button>
+    </div>
+  </div>
+</section>
+
+<footer>Seus dados ficam salvos neste navegador, na sua conta.</footer>
+</div>
+
+<script>
+let dados = [];
+let saldo = [];
+let planos = [];
+let saving = false;
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+
+async function loadData(){
+  try{
+    const res = await window.storage.get('naruto-calc-data', false);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      dados = parsed.dados || [];
+      saldo = parsed.saldo || [];
+      planos = parsed.planos || [];
+    }
+  }catch(e){ /* sem dados salvos ainda */ }
+  if(dados.length === 0){
+    dados = [
+      {id:uid(), sistema:'Pedras', up:'1 até 8', recurso:'Chaves', qtd:100, packFC:20, ganho:250},
+      {id:uid(), sistema:'Pergaminho', up:'1 até 8', recurso:'Páginas', qtd:200, packFC:10, ganho:90},
+      {id:uid(), sistema:'Ajuda Ninja', up:'1 até 7', recurso:'Poções', qtd:300, packFC:12, ganho:120},
+    ];
+  }
+  if(saldo.length === 0){
+    saldo = [
+      {id:uid(), sistema:'Pedras', recurso:'Chaves', qtd:2146},
+      {id:uid(), sistema:'Ajuda Ninja', recurso:'Poções', qtd:3245},
+    ];
+  }
+  if(planos.length === 0){
+    planos = [ {id:uid(), sistema:'Pedras', up:'1 até 8', recurso:'Chaves', qtdUps:1} ];
+  }
+  renderAll();
+}
+
+async function persist(){
+  if(saving) return;
+  saving = true;
+  try{
+    await window.storage.set('naruto-calc-data', JSON.stringify({dados, saldo, planos}), false);
+  }catch(e){ /* falha silenciosa, dados continuam em memória */ }
+  saving = false;
+}
+
+function renderAll(){
+  renderDados();
+  renderCB();
+  renderSaldo();
+  renderPlanos();
+  persist();
+}
+
+function renderDados(){
+  const body = document.getElementById('dadosBody');
+  body.innerHTML = '';
+  dados.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input value="${esc(row.sistema)}" data-field="sistema"></td>
+      <td><input value="${esc(row.up)}" data-field="up"></td>
+      <td><input value="${esc(row.recurso)}" data-field="recurso"></td>
+      <td><input type="number" value="${row.qtd}" data-field="qtd"></td>
+      <td><input type="number" value="${row.packFC}" data-field="packFC"></td>
+      <td><input type="number" value="${row.ganho}" data-field="ganho"></td>
+      <td class="row-actions"><button class="icon-btn" title="remover">✕</button></td>
+    `;
+    tr.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const f = inp.dataset.field;
+        row[f] = (f==='qtd'||f==='packFC'||f==='ganho') ? parseFloat(inp.value)||0 : inp.value;
+        renderCB(); renderPlanos(); persist();
+      });
+    });
+    tr.querySelector('.icon-btn').addEventListener('click', () => {
+      dados = dados.filter(r => r.id !== row.id);
+      renderAll();
+    });
+    body.appendChild(tr);
+  });
+  if(dados.length===0){
+    body.innerHTML = '<tr><td colspan="7" class="empty">Nenhum dado cadastrado ainda</td></tr>';
+  }
+}
+
+function renderCB(){
+  const list = document.getElementById('cbList');
+  const groups = {};
+  dados.forEach(r => {
+    const key = r.sistema + '||' + r.up;
+    if(!groups[key]) groups[key] = {sistema:r.sistema, up:r.up, packFC:r.packFC, ganho:r.ganho};
+  });
+  let arr = Object.values(groups)
+    .filter(g => g.packFC > 0)
+    .map(g => ({...g, ratio: g.ganho / g.packFC}))
+    .sort((a,b) => b.ratio - a.ratio);
+  list.innerHTML = '';
+  if(arr.length===0){
+    list.innerHTML = '<div class="empty">Cadastre a base de dados para ver o ranking</div>';
+    return;
+  }
+  arr.forEach((g, i) => {
+    const div = document.createElement('div');
+    div.className = 'cb-card';
+    div.innerHTML = `
+      <div class="cb-rank">${i+1}</div>
+      <div class="cb-info">
+        <div class="cb-title">${esc(g.sistema)} — ${esc(g.up)}</div>
+        <div class="cb-sub">${g.packFC} pack de FC · ganho de ${g.ganho} no 1º atk</div>
+      </div>
+      <div class="cb-ratio">${round2(g.ratio)}<span>atk / pack</span></div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function renderSaldo(){
+  const body = document.getElementById('saldoBody');
+  body.innerHTML = '';
+  saldo.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input value="${esc(row.sistema)}" data-field="sistema"></td>
+      <td><input value="${esc(row.recurso)}" data-field="recurso"></td>
+      <td><input type="number" value="${row.qtd}" data-field="qtd"></td>
+      <td class="row-actions"><button class="icon-btn" title="remover">✕</button></td>
+    `;
+    tr.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const f = inp.dataset.field;
+        row[f] = f==='qtd' ? parseFloat(inp.value)||0 : inp.value;
+        renderPlanos(); persist();
+      });
+    });
+    tr.querySelector('.icon-btn').addEventListener('click', () => {
+      saldo = saldo.filter(r => r.id !== row.id);
+      renderAll();
+    });
+    body.appendChild(tr);
+  });
+  if(saldo.length===0){
+    body.innerHTML = '<tr><td colspan="4" class="empty">Nenhum recurso cadastrado</td></tr>';
+  }
+}
+
+function findQtdNecessaria(sistema, up, recurso){
+  const d = dados.find(r => r.sistema===sistema && r.up===up && r.recurso===recurso);
+  return d ? d.qtd : 0;
+}
+function findQtdAtual(sistema, recurso){
+  const s = saldo.find(r => r.sistema===sistema && r.recurso===recurso);
+  return s ? s.qtd : 0;
+}
+
+function renderPlanos(){
+  const body = document.getElementById('planoBody');
+  body.innerHTML = '';
+  const combos = [...new Map(dados.map(r => [r.sistema+'||'+r.up, {sistema:r.sistema, up:r.up}])).values()];
+
+  planos.forEach(row => {
+    const tr = document.createElement('tr');
+    const comboSel = document.createElement('select');
+    combos.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.sistema+'||'+c.up;
+      opt.textContent = `${c.sistema} — ${c.up}`;
+      if(row.sistema===c.sistema && row.up===c.up) opt.selected = true;
+      comboSel.appendChild(opt);
+    });
+    if(combos.length===0){
+      const opt = document.createElement('option');
+      opt.textContent = 'cadastre a base de dados';
+      comboSel.appendChild(opt);
+    }
+    const recursoSel = document.createElement('select');
+    function fillRecursos(){
+      recursoSel.innerHTML = '';
+      const opts = dados.filter(d => d.sistema===row.sistema && d.up===row.up);
+      opts.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.recurso;
+        opt.textContent = o.recurso;
+        if(row.recurso===o.recurso) opt.selected = true;
+        recursoSel.appendChild(opt);
+      });
+      if(opts.length && !opts.some(o=>o.recurso===row.recurso)){
+        row.recurso = opts[0].recurso;
+      }
+    }
+    fillRecursos();
+
+    comboSel.addEventListener('change', () => {
+      const [sistema, up] = comboSel.value.split('||');
+      row.sistema = sistema; row.up = up;
+      fillRecursos();
+      renderPlanos(); persist();
+    });
+    recursoSel.addEventListener('change', () => { row.recurso = recursoSel.value; renderPlanos(); persist(); });
+
+    const qtdNecessaria = findQtdNecessaria(row.sistema, row.up, row.recurso);
+    const total = qtdNecessaria * (row.qtdUps || 0);
+    const atual = findQtdAtual(row.sistema, row.recurso);
+    const final = atual - total;
+
+    const tdCombo = document.createElement('td'); tdCombo.appendChild(comboSel);
+    const tdRecurso = document.createElement('td'); tdRecurso.appendChild(recursoSel);
+    const tdQtd = document.createElement('td');
+    const qtdInput = document.createElement('input');
+    qtdInput.type='number'; qtdInput.value = row.qtdUps;
+    qtdInput.addEventListener('input', () => { row.qtdUps = parseFloat(qtdInput.value)||0; renderPlanos(); persist(); });
+    tdQtd.appendChild(qtdInput);
+    const tdFinal = document.createElement('td');
+    tdFinal.innerHTML = `<span class="${final<0?'balance-neg':'balance-pos'}">${round2(final)}</span>`;
+    const tdRemove = document.createElement('td'); tdRemove.className='row-actions';
+    tdRemove.innerHTML = '<button class="icon-btn" title="remover">✕</button>';
+    tdRemove.querySelector('button').addEventListener('click', () => {
+      planos = planos.filter(r => r.id !== row.id);
+      renderAll();
+    });
+
+    tr.appendChild(tdCombo); tr.appendChild(tdRecurso); tr.appendChild(tdQtd); tr.appendChild(tdFinal); tr.appendChild(tdRemove);
+    body.appendChild(tr);
+  });
+  if(planos.length===0){
+    body.innerHTML = '<tr><td colspan="5" class="empty">Nenhum upgrade planejado</td></tr>';
+  }
+}
+
+function esc(s){ return (s ?? '').toString().replace(/"/g,'&quot;'); }
+function round2(n){ return Math.round(n*100)/100; }
+
+document.getElementById('addDados').addEventListener('click', () => {
+  dados.push({id:uid(), sistema:'', up:'', recurso:'', qtd:0, packFC:0, ganho:0});
+  renderDados(); persist();
+});
+document.getElementById('addSaldo').addEventListener('click', () => {
+  saldo.push({id:uid(), sistema:'', recurso:'', qtd:0});
+  renderSaldo(); persist();
+});
+document.getElementById('addPlano').addEventListener('click', () => {
+  const first = dados[0];
+  planos.push({id:uid(), sistema: first?first.sistema:'', up: first?first.up:'', recurso: first?first.recurso:'', qtdUps:1});
+  renderPlanos(); persist();
+});
+
+const themeBtn = document.getElementById('themeBtn');
+themeBtn.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  themeBtn.textContent = next === 'dark' ? '☀️ Modo claro' : '🌙 Modo escuro';
+});
+
+loadData();
+</script>
+</body>
+</html>
