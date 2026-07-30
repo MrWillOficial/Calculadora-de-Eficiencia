@@ -523,7 +523,7 @@
    não estritamente crescente (Ajuda Ninja).
    ====================================================================== */
 const SYSTEMS = {
-  pedras: {
+  Pedras: {
     label: "Pedras",
     unit: "nível",
     rng: true,
@@ -543,7 +543,7 @@ const SYSTEMS = {
       { from:"13", to:"14", packFC:200, gain:280, resources:[{ name:"Chaves", qty:4000 }] },
     ]
   },
-  refino: {
+  Refino: {
     label: "Refino",
     unit: "nível",
     rng: true,
@@ -559,7 +559,7 @@ const SYSTEMS = {
       { from:"9", to:"10", packFC:114.2857, gain:230, resources:[{ name:"Selo Avançado", qty:800 }] },
     ]
   },
-  ajudaNinja: {
+  AjudaNinja: {
     label: "Ajuda Ninja",
     unit: "etapa",
     rng: false,
@@ -675,8 +675,8 @@ const SYSTEMS = {
       { from:"10.12", to:"10.13", packFC:8.0, gain:0, resources:[{ name:"Poções", qty:200 }] },
     ]
   },
-  pergaminho: {
-    label: "Pergaminho",
+  Pergaminhos: {
+    label: "Pergaminhos",
     unit: "nível",
     rng: false,
     stages: [
@@ -693,34 +693,34 @@ const SYSTEMS = {
       { from:"18", to:"19", packFC:70, gain:76, resources:[{ name:"Páginas", qty:630 }, { name:"Soro da Verdade", qty:210 }] },
     ]
   },
-  invocacaoVermelha: {
+  InvocacaoVermelha: {
     label: "Invocação Vermelha",
     unit: "série",
     rng: false,
     stages: [
       { from:"Início", to:"Vento", packFC:0.72, gain:67, resources:[{ name:"Pergaminho de Liberação de Selo", qty:180.0 }] },
-      { from:"Vento", to:"Relâmpago", packFC:1.8, gain:18, resources:[{ name:"Pergaminho de Liberação de Selo", qty:450.0 }] },
-      { from:"Relâmpago", to:"Fogo", packFC:3.48, gain:19, resources:[{ name:"Pergaminho de Liberação de Selo", qty:870.0 }] },
-      { from:"Fogo", to:"Água", packFC:6, gain:21, resources:[{ name:"Pergaminho de Liberação de Selo", qty:1500 }] },
-      { from:"Água", to:"Montanha", packFC:5.76, gain:13, resources:[{ name:"Pergaminho de Liberação de Selo", qty:1440.0 }] },
-      { from:"Montanha", to:"Lago", packFC:13.32, gain:29, resources:[{ name:"Pergaminho de Liberação de Selo", qty:3330.0 }] },
-      { from:"Lago", to:"Terra", packFC:30.24, gain:21, resources:[{ name:"Pergaminho de Liberação de Selo", qty:7560.0 }] },
-      { from:"Terra", to:"Céu", packFC:32.28, gain:14, resources:[{ name:"Pergaminho de Liberação de Selo", qty:8070.0 }] },
+      { from:"Vento", to:"Relâmpago", packFC:1.8, gain:85, resources:[{ name:"Pergaminho de Liberação de Selo", qty:450.0 }] },
+      { from:"Relâmpago", to:"Fogo", packFC:3.48, gain:104, resources:[{ name:"Pergaminho de Liberação de Selo", qty:870.0 }] },
+      { from:"Fogo", to:"Água", packFC:6, gain:125, resources:[{ name:"Pergaminho de Liberação de Selo", qty:1500 }] },
+      { from:"Água", to:"Montanha", packFC:5.76, gain:138, resources:[{ name:"Pergaminho de Liberação de Selo", qty:1440.0 }] },
+      { from:"Montanha", to:"Lago", packFC:13.32, gain:167, resources:[{ name:"Pergaminho de Liberação de Selo", qty:3330.0 }] },
+      { from:"Lago", to:"Terra", packFC:30.24, gain:188, resources:[{ name:"Pergaminho de Liberação de Selo", qty:7560.0 }] },
+      { from:"Terra", to:"Céu", packFC:32.28, gain:202, resources:[{ name:"Pergaminho de Liberação de Selo", qty:8070.0 }] },
     ]
   },
-  invocacaoDourada: {
+  InvocacaoDourada: {
     label: "Invocação Dourada",
     unit: "série",
     rng: false,
     stages: [
       { from:"Início", to:"Vento", packFC:0.048, gain:3, resources:[{ name:"Pergaminho de Liberação de Selo", qty:12.0 }] },
-      { from:"Vento", to:"Relâmpago", packFC:0.176, gain:4, resources:[{ name:"Pergaminho de Liberação de Selo", qty:44.0 }] },
-      { from:"Relâmpago", to:"Fogo", packFC:0.556, gain:7, resources:[{ name:"Pergaminho de Liberação de Selo", qty:139.0 }] },
-      { from:"Fogo", to:"Água", packFC:1.66, gain:7, resources:[{ name:"Pergaminho de Liberação de Selo", qty:415.0 }] },
-      { from:"Água", to:"Montanha", packFC:4.24, gain:9, resources:[{ name:"Pergaminho de Liberação de Selo", qty:1060.0 }] },
-      { from:"Montanha", to:"Lago", packFC:12.96, gain:22, resources:[{ name:"Pergaminho de Liberação de Selo", qty:3240.0 }] },
-      { from:"Lago", to:"Terra", packFC:53.2, gain:26, resources:[{ name:"Pergaminho de Liberação de Selo", qty:13300.0 }] },
-      { from:"Terra", to:"Céu", packFC:154.52, gain:48, resources:[{ name:"Pergaminho de Liberação de Selo", qty:38630.0 }] },
+      { from:"Vento", to:"Relâmpago", packFC:0.176, gain:7, resources:[{ name:"Pergaminho de Liberação de Selo", qty:44.0 }] },
+      { from:"Relâmpago", to:"Fogo", packFC:0.556, gain:14, resources:[{ name:"Pergaminho de Liberação de Selo", qty:139.0 }] },
+      { from:"Fogo", to:"Água", packFC:1.66, gain:21, resources:[{ name:"Pergaminho de Liberação de Selo", qty:415.0 }] },
+      { from:"Água", to:"Montanha", packFC:4.24, gain:30, resources:[{ name:"Pergaminho de Liberação de Selo", qty:1060.0 }] },
+      { from:"Montanha", to:"Lago", packFC:12.96, gain:52, resources:[{ name:"Pergaminho de Liberação de Selo", qty:3240.0 }] },
+      { from:"Lago", to:"Terra", packFC:53.2, gain:78, resources:[{ name:"Pergaminho de Liberação de Selo", qty:13300.0 }] },
+      { from:"Terra", to:"Céu", packFC:154.52, gain:126, resources:[{ name:"Pergaminho de Liberação de Selo", qty:38630.0 }] },
     ]
   },
   monteMyoubokuEquilibrio: {
@@ -751,7 +751,7 @@ const SYSTEMS = {
     ]
   },
   monteMyoubokuNinjutsu: {
-    label: "Monte Myouboku — Ninjutsu / Taijutsu / Kata do Sapo",
+    label: "Monte Myouboku — Kata do Sapo / Taijutsu / Ninjutsu",
     unit: "nível",
     rng: false,
     stages: [
@@ -782,8 +782,8 @@ const SYSTEMS = {
       { from:"24", to:"25", packFC:500.0, gain:300, resources:[{ name:"Montes", qty:12500 }] },
     ]
   },
-  artefacto: {
-    label: "Artefacto — Rin / Jin / Retsu",
+  Artefato: {
+    label: "Artefato — Slot Rin / Slot Jin / Slot Retsu",
     unit: "nível",
     rng: false,
     stages: [
