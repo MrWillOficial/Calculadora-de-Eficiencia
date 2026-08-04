@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora de Eficiência de Pacotes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d16;
+    --bg-alt:#0e1220;
+    --card:#141826;
+    --card2:#1a1f2f;
+    --border:#262d40;
+    --text:#eef1f7;
+    --muted:#8d95ab;
+    --orange:#f7a94a;
+    --orange2:#ff7d3d;
+    --blue:#6c7cf0;
+    --blue2:#8f6ff5;
+    --green:#3ddcaf;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 500px at 15% -10%, rgba(111,111,240,.10), transparent),
+      radial-gradient(900px 400px at 100% 0%, rgba(247,169,74,.06), transparent),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    padding:0 0 40px;
+  }
+  h1,h2,h3,.brand{font-family:'Baloo 2',system-ui,sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  /* nav */
+  nav{
+    border-bottom:1px solid var(--border);
+    background:rgba(10,13,22,.85);
+    backdrop-filter:blur(6px);
+    position:sticky;top:0;z-index:10;
+  }
+  .navrow{max-width:980px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-size:19px;font-weight:700;letter-spacing:.01em;}
+  .brand span{background:linear-gradient(90deg,var(--orange2),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .tabs{display:flex;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:4px;}
+  .tab{
+    padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);
+    cursor:pointer;border:none;background:transparent;font-family:inherit;transition:.15s;
+  }
+  .tab.active{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;}
+
+  /* hero / home page */
+  .eyebrow{
+    font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--orange);margin-bottom:10px;
+  }
+  .hero{padding:56px 0 8px;}
+  .hero h1{font-size:38px;line-height:1.15;margin:0 0 16px;font-weight:700;}
+  .hero h1 .hl{background:linear-gradient(90deg,var(--orange2),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{color:#c3c9db;font-size:15.5px;line-height:1.7;max-width:640px;margin:0 0 10px;}
+  .hero p.thanks{color:var(--muted);font-size:14px;margin-top:18px;}
+
+  .cta{
+    display:inline-flex;align-items:center;gap:8px;margin-top:22px;
+    background:linear-gradient(135deg,var(--blue),var(--blue2));
+    color:#fff;border:none;padding:13px 22px;border-radius:10px;font-weight:700;font-size:14px;
+    font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(108,124,240,.25);
+  }
+
+  .section-title{font-size:26px;margin:48px 0 6px;font-weight:700;}
+  .section-sub{color:var(--muted);font-size:14.5px;margin-bottom:20px;}
+
+  .cardgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:8px;}
+  .minicard{
+    background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;
+    transition:.2s;
+  }
+  .minicard:hover{border-color:var(--blue);transform:translateY(-2px);}
+  .minicard .icon{font-size:26px;margin-bottom:10px;}
+  .minicard h3{font-size:15px;margin:0 0 4px;font-weight:600;}
+  .minicard p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.5;}
+
+  /* calculator page */
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:16px;
+  }
+  label{font-size:11.5px;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+  select, input[type="text"]{
+    width:100%;
+    background:var(--card2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:11px 12px;
+    border-radius:9px;
+    font-size:14px;
+    font-family:inherit;
+  }
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;}
+  th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--border);}
+  th:first-child, td:first-child{text-align:left;}
+  th{color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;}
+  tr.best{background:rgba(61,220,175,.08);}
+  tr.best td:first-child{color:var(--green);font-weight:700;}
+  .badge{display:inline-block;background:var(--green);color:#0a0d16;font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;margin-left:6px;}
+  .formula{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7;}
+  .empty{color:var(--muted);font-size:13.5px;padding:26px 0;text-align:center;}
+  .note{font-size:11.5px;color:var(--muted);margin-top:18px;border-top:1px solid var(--border);padding-top:14px;}
+  .page{display:none;}
+  .page.active{display:block;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="navrow">
+    <div class="brand">Naruto<span>Planner</span></div>
+    <div class="tabs">
+      <button class="tab active" data-page="home">Início</button>
+      <button class="tab" data-page="calc">Calculadora</button>
+      <button class="tab" data-page="trajes">Trajes</button>
+      <button class="tab" data-page="invoc">Invocações</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- PÁGINA INÍCIO -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="eyebrow">Bem-vindo(a)</div>
+      <h1>Valeu por dar <span class="hl">o play</span> na calculadora</h1>
+      <p>Essa ferramenta nasceu de uma vontade simples: te ajudar a gastar seus recursos com mais inteligência, sem cair em pacotes que parecem vantajosos mas escondem um preço bem mais alto. Todo pacote de escolha esconde um "custo real" — e aqui a gente traduz isso pra Cupons, de um jeito simples de comparar.</p>
+      <p class="thanks">Obrigado por fazer parte disso e por confiar no nosso trabalho. Espero que ela te ajude a economizar Cupons e chegar mais longe no jogo — e que você volte sempre que tiver dúvida antes de investir em algum ninja. Bora crescer juntos 🔥</p>
+      <button class="cta" onclick="goTo('calc')">Abrir a calculadora →</button>
+    </div>
+
+    <div class="section-title">O que você encontra aqui</div>
+    <div class="section-sub">Uma ferramenta, pensada pra crescer com a comunidade.</div>
+    <div class="cardgrid">
+      <div class="minicard">
+        <div class="icon">🥷</div>
+        <h3>Fragmentos de Ninja</h3>
+        <p>Veja em quais pacotes cada ninja aparece e quanto custa cada fragmento dele.</p>
+      </div>
+      <div class="minicard">
+        <div class="icon">💰</div>
+        <h3>Custo em Cupons</h3>
+        <p>Tudo convertido pra uma unidade só, usando o Pacote de Força como referência.</p>
+      </div>
+      <div class="minicard">
+        <div class="icon">⭐</div>
+        <h3>Caminho até 5★</h3>
+        <p>Descubra o investimento total pra levar seu ninja até 3★, 4★ ou o máximo.</p>
+      </div>
+      <div class="minicard">
+        <div class="icon">🔄</div>
+        <h3>Sempre atualizando</h3>
+        <p>Conforme novos pacotes saem, a base de dados vai sendo expandida.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA CALCULADORA -->
+  <div class="page" id="page-calc">
+    <div class="hero" style="padding-top:36px;padding-bottom:0;">
+      <div class="eyebrow">Ferramenta</div>
+      <h1 style="font-size:28px;">Calculadora de <span class="hl">Eficiência</span> de Pacotes</h1>
+      <p>Custo de cada ninja em Cupons, comparando entre todos os pacotes onde ele aparece. Base: 1 Pacote de Força (ou II) = 250 Cupons.</p>
+    </div>
+
+    <div class="card">
+      <label for="search">Buscar ninja</label>
+      <input type="text" id="search" placeholder="Digite parte do nome (ex: Madara, Guy, Shisui...)">
+      <div style="height:10px"></div>
+      <label for="ninjaSelect">Selecionar ninja</label>
+      <select id="ninjaSelect"></select>
+    </div>
+
+    <div class="card" id="resultCard" style="display:none;">
+      <div id="resultTitle" style="font-size:17px;font-weight:700;margin-bottom:4px;font-family:'Baloo 2',sans-serif;"></div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:0;" id="resultSub"></div>
+      <table id="resultTable">
+        <thead>
+          <tr>
+            <th>Pacote</th>
+            <th>Fragmentos no pacote</th>
+            <th>Custo / fragmento</th>
+            <th>Custo 3★ (80 frag)</th>
+            <th>Custo 4★ (180 frag)</th>
+            <th>Custo 5★ (380 frag)</th>
+          </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+      <div class="formula">
+        Fórmula: custo por fragmento = valor do pacote (em Cupons) ÷ qtd. de fragmentos daquele ninja no pacote.<br>
+        Estrelas: 3★ exige 80 fragmentos · 4★ exige +100 (180 no total) · 5★ (máximo) exige +200 (380 no total).<br>
+        O menor custo/fragmento é destacado como <span class="badge">MELHOR</span> — é o pacote mais barato pra investir nesse ninja.
+      </div>
+    </div>
+
+    <div class="card empty" id="emptyState">Selecione um ninja acima para ver em quais pacotes ele aparece e qual é o mais barato.</div>
+
+    <div class="note">
+      Dados consolidados a partir dos pacotes enviados até agora. Conforme mais prints forem chegando, é só atualizar o array <code>PACKAGES</code> neste arquivo.
+    </div>
+  </div>
+
+  <!-- PÁGINA TRAJES -->
+  <div class="page" id="page-trajes">
+    <div class="hero" style="padding-top:36px;padding-bottom:0;">
+      <div class="eyebrow">Ferramenta</div>
+      <h1 style="font-size:28px;">Calculadora de <span class="hl">Trajes</span></h1>
+      <p>Custo de cada traje em Cupons. Trajes precisam de 50 fragmentos pra formar, sem upgrade depois disso.</p>
+    </div>
+
+    <div class="card">
+      <label for="searchTraje">Buscar traje</label>
+      <input type="text" id="searchTraje" placeholder="Digite parte do nome do traje...">
+      <div style="height:10px"></div>
+      <label for="trajeSelect">Selecionar traje</label>
+      <select id="trajeSelect"></select>
+    </div>
+
+    <div class="card" id="resultCardTraje" style="display:none;">
+      <div id="resultTitleTraje" style="font-size:17px;font-weight:700;margin-bottom:4px;font-family:'Baloo 2',sans-serif;"></div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:0;" id="resultSubTraje"></div>
+      <table id="resultTableTraje">
+        <thead>
+          <tr>
+            <th>Pacote</th>
+            <th>Fragmentos no pacote</th>
+            <th>Custo / fragmento</th>
+            <th>Custo total (50 frag)</th>
+          </tr>
+        </thead>
+        <tbody id="resultBodyTraje"></tbody>
+      </table>
+      <div class="formula">
+        Fórmula: custo por fragmento = valor do pacote (em Cupons) ÷ qtd. de fragmentos do traje no pacote.<br>
+        Traje completo = 50 fragmentos, sem estrelas nem upgrade depois disso.<br>
+        O menor custo/fragmento é destacado como <span class="badge">MELHOR</span>.
+      </div>
+    </div>
+
+    <div class="card empty" id="emptyStateTraje">Selecione um traje acima para ver em quais pacotes ele aparece e qual é o mais barato.</div>
+  </div>
+
+  <!-- PÁGINA INVOCAÇÕES -->
+  <div class="page" id="page-invoc">
+    <div class="hero" style="padding-top:36px;padding-bottom:0;">
+      <div class="eyebrow">Ferramenta</div>
+      <h1 style="font-size:28px;">Calculadora de <span class="hl">Invocações</span></h1>
+      <p>As invocações não são por personagem específico — são moedas por nível: Normal, Dourada e Vermelha. Cada uma tem seu próprio custo total e fragmentos necessários pra sintetizar.</p>
+    </div>
+    <div id="invocSections"></div>
+  </div>
+
+</div>
+
+<script>
+// ---- navegação entre páginas ----
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector('.tab[data-page="'+page+'"]').classList.add('active');
+}
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>goTo(t.dataset.page));
+});
+
+// ---- dados e lógica da calculadora ----
+const PF = 250; // 1 Pacote de Força (ou II) = 250 Cupons
+
+const PACKAGES = [
+  { name: "Pacote de Ninjas Lendários III", value: 5*PF, items: {
+    "Madara Uchiha [Fundador da Aldeia da Folha]":1, "Hashirama Senju [Reanimação]":1, "Shisui Uchiha [Susano'o]":1,
+    "Ashura Otsutsuki":1, "Indra Otsutsuki":1, "Pain [Reunião dos Seis Caminhos]":1 } },
+
+  { name: "Pacote de Otsutsuki", value: 1*PF, items: {
+    "Ashura Otsutsuki":1, "Indra Otsutsuki":1 } },
+
+  { name: "Pacote de Ninjas Lendários IV", value: 3*PF, items: {
+    "Pain [Reunião dos Seis Caminhos]":1, "Hashirama Senju [Vale do Fim]":1, "Madara Uchiha [Vale do Fim]":1,
+    "Guy [Portão da Morte]":1, "Indra Otsutsuki [Susano'o Perfeito]":1, "Ashura Otsutsuki [Modo conexão Nove Caudas]":1 } },
+
+  { name: "Pacote Supremo Tesouro Nove Estrelas", value: 600*PF, items: {
+    "Pain [Reunião dos Seis Caminhos]":80, "Hashirama Senju [Vale do Fim]":80, "Shisui Uchiha [Susano'o]":100,
+    "Madara Uchiha [Jinchuuriki da Dez Caudas]":100, "Obito [Jinchuuriki da Dez Caudas]":100,
+    "Indra Otsutsuki":100, "Ashura Otsutsuki":100 } },
+
+  { name: "Pacote de Árvore da Folha à escolha IV", value: 1*PF, items: {
+    "Indra Otsutsuki":1, "Ashura Otsutsuki":1, "Obito Uchiha [Conexão da Dez Caudas]":2,
+    "Kurotsuchi [Rito do Renascimento]":3, "Yagura [Ano Novo]":5 } },
+
+  { name: "Pacote de Ranking de Gratidão de Fukurokumaru", value: 1000, items: {
+    "Shisui Uchiha [Susano'o]":1, "Ashura Otsutsuki":1, "Indra Otsutsuki":1,
+    "Pain [Reunião dos Seis Caminhos]":1, "Guy [Portão da Morte]":1 } },
+
+  { name: "Pacote de Ninjas Finais à escolha V", value: 6*PF, items: {
+    "Guy [Portão da Morte]":1, "Indra Otsutsuki [Susano'o Perfeito]":1, "Ashura Otsutsuki [Modo conexão Nove Caudas]":1,
+    "Obito Uchiha [Nunoboko]":1, "Madara Uchiha [Olho da Lua]":1, "Naruto [Vale do Fim]":1 } },
+
+  { name: "Pacote de 1º Prêmio da Caça-níqueis Louco 2026", value: 20*PF, items: {
+    "Obito Uchiha [Nunoboko]":4, "Ashura Otsutsuki [Modo conexão Nove Caudas]":4, "Indra Otsutsuki [Susano'o Perfeito]":5,
+    "Guy [Portão da Morte]":5, "Madara Uchiha [Vale do Fim]":5, "Hashirama Senju [Vale do Fim]":5,
+    "Pain [Reunião dos Seis Caminhos]":5, "Indra Otsutsuki":5, "Ashura Otsutsuki":5, "Shisui Uchiha [Susano'o]":5,
+    "Naruto [Sasuke Shinden]":10 } },
+
+  { name: "Pacote de Retorno de Fukurokumaru 2026 III", value: 4*PF, items: {
+    "Hashirama Senju [Vale do Fim]":1, "Pain [Reunião dos Seis Caminhos]":1, "Indra Otsutsuki":1, "Ashura Otsutsuki":1,
+    "Shisui Uchiha [Susano'o]":1, "Obito [Jinchuuriki da Dez Caudas]":1, "Madara Uchiha [Jinchuuriki da Dez Caudas]":1 } },
+
+  { name: "Pacote de Ranking de Flores/Girassol III", value: 10*PF, items: {
+    "Obito Uchiha [Nunoboko]":2, "Ashura Otsutsuki [Modo conexão Nove Caudas]":2, "Indra Otsutsuki [Susano'o Perfeito]":2,
+    "Guy [Portão da Morte]":2, "Madara Uchiha [Vale do Fim]":4, "Hashirama Senju [Vale do Fim]":4,
+    "Pain [Reunião dos Seis Caminhos]":5, "Naruto [Sasuke Shinden]":5, "Kabuto [Grande Guerra Ninja]":10,
+    "Hamura Otsutsuki":10, "Hagoromo Otsutsuki [Jovem]":10, "Pain Caminho: Asura [Forma Asura]":10,
+    "Tobi [Grande Guerra Ninja]":10, "Terceiro Kazekage [Reanimação]":10, "Sakura [Sasuke Shinden]":10,
+    "Madara Uchiha [Lâmina da Noite Escarlate]":10, "Kakashi [Sexto Hokage]":10, "Orochimaru [Ano Novo]":10,
+    "Utakata [Status Bijuu]":10 } },
+
+  { name: "Pacote de Ranking de Flores/Girassol II", value: 10*PF, items: {
+    "Ashura Otsutsuki [Modo conexão Nove Caudas]":2, "Indra Otsutsuki [Susano'o Perfeito]":2, "Guy [Portão da Morte]":2,
+    "Madara Uchiha [Vale do Fim]":4, "Hashirama Senju [Vale do Fim]":4, "Pain [Reunião dos Seis Caminhos]":5,
+    "Kabuto [Grande Guerra Ninja]":10, "Hamura Otsutsuki":10, "Hagoromo Otsutsuki [Jovem]":10,
+    "Pain Caminho: Asura [Forma Asura]":10, "Tobi [Grande Guerra Ninja]":10, "Terceiro Kazekage [Reanimação]":10,
+    "Sakura [Sasuke Shinden]":10, "Madara Uchiha [Lâmina da Noite Escarlate]":10, "Kakashi [Sexto Hokage]":10 } },
+
+  { name: "Pacote de Escolha da Lista de Flores", value: 12*PF, items: {
+    "Indra Otsutsuki":4, "Pain [Reunião dos Seis Caminhos]":4, "Hashirama Senju [Vale do Fim]":4, "Madara Uchiha [Vale do Fim]":4,
+    "Orochimaru [Grande Guerra Ninja]":6, "Itachi Uchiha [Oriental]":7, "Jiraiya [Canto do Sapo]":8,
+    "Deidara [Argila Explosiva]":10, "Guy [Portão da Morte]":2, "Gaara [Traje de Banho]":10,
+    "Shisui Uchiha [Oriental]":10, "Indra Otsutsuki [Susano'o Perfeito]":2, "Hamura Otsutsuki":10,
+    "Hagoromo Otsutsuki [Jovem]":10, "Pain Caminho: Asura [Forma Asura]":10, "Kabuto [Grande Guerra Ninja]":9,
+    "Ashura Otsutsuki [Modo conexão Nove Caudas]":2, "Tobi [Grande Guerra Ninja]":10, "Terceiro Kazekage [Reanimação]":10,
+    "Sakura [Sasuke Shinden]":10, "Madara Uchiha [Lâmina da Noite Escarlate]":10 } },
+
+  { name: "Pacote de 3º Prêmio da Caça-níqueis Louco 2026", value: 4*PF, items: {
+    "Shisui Uchiha [Susano'o]":1, "Orochimaru [Grande Guerra Ninja]":1, "Tsunade [Uma Centena de Curas]":1,
+    "Kabuto [Grande Guerra Ninja]":4, "Obito Uchiha [Violência]":4, "Hamura Otsutsuki":4, "Hagoromo Otsutsuki [Jovem]":4,
+    "Pain Caminho: Asura [Forma Asura]":4, "Terceiro Kazekage [Reanimação]":4, "Tobi [Grande Guerra Ninja]":4,
+    "Sakura [Sasuke Shinden]":4, "Ameyuri Ringo [Traje de Banho]":5, "Gengetsu Hozuki [Traje de Banho]":5,
+    "Chojuro [Traje de Banho]":5, "Chino [Sasuke Shinden]":5, "Vontade da Aldeia da Folha":3, "Feliz Ano Novo":3 } },
+
+  { name: "Pacote de 2º Prêmio da Caça-níqueis Louco 2026", value: 5*PF, items: {
+    "Guy [Portão da Morte]":1, "Pain [Reunião dos Seis Caminhos]":1, "Orochimaru [Grande Guerra Ninja]":2,
+    "Kabuto [Grande Guerra Ninja]":5, "Hamura Otsutsuki":6, "Hagoromo Otsutsuki [Jovem]":6,
+    "Pain Caminho: Asura [Forma Asura]":6, "Tobi [Grande Guerra Ninja]":6, "Terceiro Kazekage [Reanimação]":6,
+    "Sakura [Sasuke Shinden]":6, "Madara Uchiha [Lâmina da Noite Escarlate]":6, "Kakashi [Sexto Hokage]":6,
+    "Orochimaru [Ano Novo]":6 } },
+
+  { name: "Pacote de 2º Prêmio da Caça-níqueis Louco 2025", value: 5*PF, items: {
+    "Guy [Portão da Morte]":1, "Pain [Reunião dos Seis Caminhos]":1, "Shisui Uchiha [Susano'o]":1,
+    "Orochimaru [Grande Guerra Ninja]":2, "Tsunade [Uma Centena de Curas]":2, "Itachi Uchiha [Oriental]":4,
+    "Deidara [Rito do Renascimento]":4, "Jiraiya [Canto do Sapo]":4, "Kabuto [Grande Guerra Ninja]":5,
+    "Hamura Otsutsuki":6, "Hagoromo Otsutsuki [Jovem]":6, "Pain Caminho: Asura [Forma Asura]":6,
+    "Tobi [Grande Guerra Ninja]":6, "Terceiro Kazekage [Reanimação]":6, "Madara Uchiha [Lâmina da Noite Escarlate]":6,
+    "Sakura [Sasuke Shinden]":6 } },
+
+  { name: "Pacote de 3º Prêmio da Caça-níqueis Louco 2025", value: 5*PF, items: {
+    "Shisui Uchiha [Susano'o]":1, "Orochimaru [Grande Guerra Ninja]":1, "Tsunade [Uma Centena de Curas]":1,
+    "Deidara [Rito do Renascimento]":2, "Jiraiya [Canto do Sapo]":2, "Itachi Uchiha [Oriental]":2,
+    "Kabuto [Grande Guerra Ninja]":3, "Obito Uchiha [Violência]":4, "Hamura Otsutsuki":5, "Mecha-Naruto":5,
+    "Gaara [Traje de Banho]":5, "Deidara [Argila Explosiva]":5, "Kinkaku [Status Bijuu]":5,
+    "Shisui Uchiha [Oriental]":6, "Ameyuri Ringo [Traje de Banho]":6, "Gengetsu Hozuki [Traje de Banho]":6,
+    "Montanhas e Mar":5, "Samurai Tecnológico":5, "Iluminação Comemorativa":5, "Canção do Mundo":5,
+    "Vontade da Aldeia da Folha":3 } },
+
+  { name: "Pacote de 1º Prêmio da Caça-níqueis Louco (clássico)", value: 10*PF, items: {
+    "Guy [Portão da Morte]":5, "Hashirama Senju [Vale do Fim]":5, "Madara Uchiha [Vale do Fim]":5,
+    "Indra Otsutsuki":5, "Ashura Otsutsuki":5, "Shisui Uchiha [Susano'o]":5, "Orochimaru [Grande Guerra Ninja]":10,
+    "Kabuto [Grande Guerra Ninja]":20, "Indra Otsutsuki [Susano'o Perfeito]":5 } },
+
+  { name: "Pacote de 2º Prêmio da Caça-níqueis Louco (clássico)", value: 5*PF, items: {
+    "Shisui Uchiha [Susano'o]":1, "Pain [Reunião dos Seis Caminhos]":1, "Guy [Portão da Morte]":1,
+    "Orochimaru [Grande Guerra Ninja]":2, "Tsunade [Uma Centena de Curas]":2, "Deidara [Rito do Renascimento]":3,
+    "Itachi Uchiha [Oriental]":4, "Jiraiya [Canto do Sapo]":4, "Obito Uchiha [Violência]":6,
+    "Gaara [Traje de Banho]":6, "Hamura Otsutsuki":6, "Killer B [Status Bijuu]":7, "Deidara [Argila Explosiva]":6,
+    "Shisui Uchiha [Chinês]":6, "Hagoromo Otsutsuki [Jovem]":6, "Pain Caminho: Asura [Forma Asura]":6 } },
+
+  { name: "Pacote de 3º Prêmio da Caça-níqueis Louco (clássico)", value: 5*PF, items: {
+    "Orochimaru [Grande Guerra Ninja]":1, "Tsunade [Uma Centena de Curas]":1, "Deidara [Rito do Renascimento]":1,
+    "Itachi Uchiha [Oriental]":2, "Karin [Time Taka]":2, "Jiraiya [Canto do Sapo]":2, "Zetsu Negro":2,
+    "Sasuke Uchiha [Oriental]":5, "Mecha-Naruto":5, "Yagura [Ano Novo]":6, "Nagato [Dia de Inverno]":5,
+    "Kinkaku [Status Bijuu]":6, "Mei Terumi [Meio Outono]":6, "Karin [Grande Guerra Ninja]":6,
+    "Tobirama Senju [Traje de Banho]":7, "Pain: Caminho Animal [Masc.]":6, "Kisame Hoshigaki [Traje de Banho]":7,
+    "Jiraiya [Estilo Oriental]":7, "Obito Uchiha [Violência]":4, "Han [Status Bijuu]":6, "Hidan [Sombra Demoníaca]":7,
+    "Deidara [Ano Novo]":6, "Festival de Inverno":10, "Montanhas e Mar":5, "Samurai Tecnológico":5,
+    "Iluminação Comemorativa":5, "Canção do Mundo":5, "Sasori [Hiruko]":6 } },
+
+  { name: "Pacote Vale do Fim à escolha", value: 6*PF, items: {
+    "Hashirama Senju [Vale do Fim]":1, "Madara Uchiha [Vale do Fim]":1 } },
+
+  { name: "Pacote de Árvore da Folha à escolha X", value: 1*PF, items: {
+    "Guy [Portão da Morte]":1, "Pain [Reunião dos Seis Caminhos]":1, "Hashirama Senju [Vale do Fim]":1,
+    "Madara Uchiha [Vale do Fim]":1 } },
+
+  { name: "Pacote de Árvore da Folha à escolha III", value: 1*PF, items: {
+    "Madara Uchiha [Jinchuuriki da Dez Caudas]":1, "Obito [Jinchuuriki da Dez Caudas]":1,
+    "Madara Uchiha [Vale do Fim]":1, "Sasuke Uchiha [Oriental]":4 } },
+
+  { name: "Pacote de Árvore da Folha à escolha II", value: 1*PF, items: {
+    "Shisui Uchiha [Susano'o]":1, "Madara Uchiha [Fundador da Aldeia da Folha]":2, "Hashirama Senju [Reanimação]":2,
+    "Deidara [Rito do Renascimento]":2, "Orochimaru [Grande Guerra Ninja]":2 } },
+
+  { name: "Pacote de Árvore da Folha à escolha VIII", value: 1*PF, items: {
+    "Indra Otsutsuki":1, "Ashura Otsutsuki":1, "Shisui Uchiha [Susano'o]":1 } },
+
+  { name: "Pacote de Árvore da Folha à escolha VI", value: 1*PF, items: {
+    "Pain [Reunião dos Seis Caminhos]":1, "Hashirama Senju [Vale do Fim]":1, "Madara Uchiha [Vale do Fim]":1 } },
+
+  { name: "2026 Pacote de Fukurokumaru V", value: 5*PF, items: {
+    "Pain [Reunião dos Seis Caminhos]":1, "Obito Uchiha [Violência]":5, "Hagoromo Otsutsuki [Jovem]":5,
+    "Terceiro Kazekage [Reanimação]":5 } },
+
+  { name: "Pacote de Retorno de Fukurokumaru 2026 II", value: 2*PF, items: {
+    "Orochimaru [Grande Guerra Ninja]":1, "Tsunade [Uma Centena de Curas]":1, "Naruto [Sasuke Shinden]":1,
+    "Itachi Uchiha [Oriental]":1, "Deidara [Rito do Renascimento]":1, "Karin [Time Taka]":1,
+    "Jiraiya [Canto do Sapo]":1, "Kabuto [Grande Guerra Ninja]":1 } },
+
+  { name: "Pacote de Retorno de Fukurokumaru 2026 I", value: 1*PF, items: {
+    "Obito Uchiha [Violência]":1, "Hamura Otsutsuki":1, "Hagoromo Otsutsuki [Jovem]":1, "Haku [Ronin]":1,
+    "Hiruzen Sarutobi [Ano Novo]":1, "Ameyuri Ringo [Traje de Banho]":1 } },
+
+  { name: "2026 Pacote de Fukurokumaru III", value: 5*PF, items: {
+    "Pain [Reunião dos Seis Caminhos]":1, "Kabuto [Grande Guerra Ninja]":4, "Obito Uchiha [Violência]":5,
+    "Hiruzen Sarutobi [Ano Novo]":6 } },
+
+  { name: "2026 Pacote de Fukurokumaru II", value: 5*PF, items: {
+    "Pain [Reunião dos Seis Caminhos]":1, "Jiraiya [Canto do Sapo]":3, "Obito Uchiha [Violência]":4,
+    "Hagoromo Otsutsuki [Jovem]":5 } },
+
+  { name: "2026 Pacote de Fukurokumaru I", value: 5*PF, items: {
+    "Pain [Reunião dos Seis Caminhos]":1, "Itachi Uchiha [Oriental]":3, "Hamura Otsutsuki":5,
+    "Hiruzen Sarutobi [Ano Novo]":6, "Jiraiya [Estilo Oriental]":8 } },
+
+  { name: "Pacote de Ranking de Gratidão de Fukurokumaru II", value: 1000, items: {
+    "Hashirama Senju [Vale do Fim]":1, "Pain [Reunião dos Seis Caminhos]":1, "Indra Otsutsuki":1,
+    "Ashura Otsutsuki":1, "Shisui Uchiha [Susano'o]":1 } },
+
+  { name: "Retorno de Fukurokumaru 2025 VI", value: 4*PF, items: {
+    "Hashirama Senju [Vale do Fim]":1, "Pain [Reunião dos Seis Caminhos]":1, "Indra Otsutsuki":1,
+    "Ashura Otsutsuki":1, "Shisui Uchiha [Susano'o]":1, "Obito [Jinchuuriki da Dez Caudas]":1,
+    "Madara Uchiha [Jinchuuriki da Dez Caudas]":1, "Itachi Uchiha [Susano'o]":1 } },
+
+  { name: "Retorno de Fukurokumaru 2025 V", value: 2*PF, items: {
+    "Orochimaru [Grande Guerra Ninja]":1, "Tsunade [Uma Centena de Curas]":1, "Itachi Uchiha [Oriental]":1,
+    "Deidara [Rito do Renascimento]":1, "Karin [Time Taka]":1, "Jiraiya [Canto do Sapo]":1,
+    "Naruto [Ronin]":1, "Kabuto [Grande Guerra Ninja]":1 } },
+
+  { name: "Retorno de Fukurokumaru 2025 IV", value: 1*PF, items: {
+    "Obito Uchiha [Violência]":1, "Hamura Otsutsuki":1, "Gaara [Traje de Banho]":1, "Deidara [Argila Explosiva]":1,
+    "Mecha-Naruto":1, "Shisui Uchiha [Oriental]":1 } },
+
+  { name: "Pacote de Fukurokumaru à escolha V", value: 5*PF, items: {
+    "Shisui Uchiha [Susano'o]":1, "Orochimaru [Grande Guerra Ninja]":2, "Tsunade [Uma Centena de Curas]":2,
+    "Itachi Uchiha [Oriental]":3, "Deidara [Rito do Renascimento]":4, "Jiraiya [Canto do Sapo]":4,
+    "Naruto [Ronin]":4, "Karin [Time Taka]":4, "Hamura Otsutsuki":6 } },
+
+  { name: "Pacote de Invocações e Ninjas à escolha III", value: 4*PF, items: {
+    "Tobi [Grande Guerra Ninja]":4, "Sakura [Sasuke Shinden]":4, "Madara Uchiha [Lâmina da Noite Escarlate]":4,
+    "Kakashi [Sexto Hokage]":4, "Orochimaru [Ano Novo]":4, "Chino [Sasuke Shinden]":5 } },
+
+  { name: "Pacote de Ninjas Valiosos à escolha 2026", value: 4*PF, items: {
+    "Orochimaru [Grande Guerra Ninja]":1, "Itachi Uchiha [Oriental]":2, "Jiraiya [Canto do Sapo]":3,
+    "Kabuto [Grande Guerra Ninja]":3, "Obito Uchiha [Violência]":4, "Hamura Otsutsuki":5,
+    "Hagoromo Otsutsuki [Jovem]":5, "Pain Caminho: Asura [Forma Asura]":5, "Tobi [Grande Guerra Ninja]":5,
+    "Terceiro Kazekage [Reanimação]":5, "Sakura [Sasuke Shinden]":5, "Madara Uchiha [Lâmina da Noite Escarlate]":5,
+    "Kakashi [Sexto Hokage]":5, "Ameyuri Ringo [Traje de Banho]":6, "Gengetsu Hozuki [Traje de Banho]":6,
+    "Chojuro [Traje de Banho]":6, "Orochimaru [Ano Novo]":6, "Chino [Sasuke Shinden]":6 } },
+
+  { name: "Pacote de Ninjas de Ajuda Opcional IV", value: 2*PF, items: {
+    "Itachi Uchiha [Ronin]":1, "Sasuke [Sasuke Shinden]":1, "Naruto [Sasuke Shinden]":1, "Kabuto [Grande Guerra Ninja]":2,
+    "Hamura Otsutsuki":2, "Hagoromo Otsutsuki [Jovem]":2, "Pain Caminho: Asura [Forma Asura]":2,
+    "Tobi [Grande Guerra Ninja]":2, "Terceiro Kazekage [Reanimação]":2, "Sakura [Sasuke Shinden]":2,
+    "Madara Uchiha [Lâmina da Noite Escarlate]":2, "Kakashi [Sexto Hokage]":2, "Orochimaru [Ano Novo]":2,
+    "Utakata [Status Bijuu]":2 } },
+
+  { name: "Pacote de Ninjas Finais à escolha IV", value: 6*PF, items: {
+    "Guy [Portão da Morte]":1, "Indra Otsutsuki [Susano'o Perfeito]":1, "Ashura Otsutsuki [Modo conexão Nove Caudas]":1,
+    "Obito Uchiha [Nunoboko]":1, "Madara Uchiha [Olho da Lua]":1 } },
+
+  { name: "Pacote de Ninja Avançado à escolha V", value: 1*PF, items: {
+    "Hamura Otsutsuki":1, "Hagoromo Otsutsuki [Jovem]":1, "Pain Caminho: Asura [Forma Asura]":1,
+    "Tobi [Grande Guerra Ninja]":1, "Madara Uchiha [Lâmina da Noite Escarlate]":1, "Utakata [Status Bijuu]":1 } },
+
+  { name: "Pacote de Ninjas de Ajuda Opcional III", value: 2*PF, items: {
+    "Sasuke [Sasuke Shinden]":1, "Naruto [Sasuke Shinden]":1, "Kabuto [Grande Guerra Ninja]":2, "Hamura Otsutsuki":2,
+    "Hagoromo Otsutsuki [Jovem]":2, "Pain Caminho: Asura [Forma Asura]":2, "Tobi [Grande Guerra Ninja]":2,
+    "Terceiro Kazekage [Reanimação]":2, "Sakura [Sasuke Shinden]":2, "Madara Uchiha [Lâmina da Noite Escarlate]":2,
+    "Kakashi [Sexto Hokage]":2, "Orochimaru [Ano Novo]":2 } },
+
+  { name: "Pacote de Ninja Avançado à escolha VII", value: 22000, items: {
+    "Terceiro Kazekage [Reanimação]":80, "Sakura [Sasuke Shinden]":80, "Kakashi [Sexto Hokage]":80,
+    "Orochimaru [Ano Novo]":80 } },
+];
+
+const index = {};
+PACKAGES.forEach(pkg => {
+  Object.entries(pkg.items).forEach(([ninja, qty]) => {
+    if (!index[ninja]) index[ninja] = [];
+    index[ninja].push({ pacote: pkg.name, qtd: qty, custo: pkg.value / qty });
+  });
+});
+
+const ninjaNames = Object.keys(index).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+const selectEl = document.getElementById('ninjaSelect');
+const searchEl = document.getElementById('search');
+
+function populateSelect(filter){
+  filter = filter || '';
+  const f = filter.trim().toLowerCase();
+  const list = f ? ninjaNames.filter(n => n.toLowerCase().includes(f)) : ninjaNames;
+  selectEl.innerHTML = '<option value="">-- selecione --</option>' +
+    list.map(n => '<option value="'+n.replace(/"/g,'&quot;')+'">'+n+'</option>').join('');
+}
+populateSelect();
+
+searchEl.addEventListener('input', () => populateSelect(searchEl.value));
+
+function fmt(n){
+  return n.toLocaleString('pt-BR', {maximumFractionDigits:1});
+}
+
+selectEl.addEventListener('change', () => {
+  const ninja = selectEl.value;
+  const resultCard = document.getElementById('resultCard');
+  const emptyState = document.getElementById('emptyState');
+  if (!ninja) { resultCard.style.display='none'; emptyState.style.display='block'; return; }
+
+  const rows = index[ninja].slice().sort((a,b)=>a.custo-b.custo);
+  const minCusto = rows[0].custo;
+
+  document.getElementById('resultTitle').textContent = ninja;
+  document.getElementById('resultSub').textContent = 'Encontrado em ' + rows.length + ' pacote(s)';
+
+  document.getElementById('resultBody').innerHTML = rows.map(r =>
+    '<tr class="'+(r.custo===minCusto ? 'best' : '')+'">' +
+      '<td>'+r.pacote+(r.custo===minCusto ? ' <span class="badge">MELHOR</span>' : '')+'</td>' +
+      '<td>'+r.qtd+'</td>' +
+      '<td>'+fmt(r.custo)+'</td>' +
+      '<td>'+fmt(r.custo*80)+'</td>' +
+      '<td>'+fmt(r.custo*180)+'</td>' +
+      '<td>'+fmt(r.custo*380)+'</td>' +
+    '</tr>').join('');
+
+  resultCard.style.display='block';
+  emptyState.style.display='none';
+});
+
+// ---- dados e lógica de trajes/roupas ----
+const TRAJE_FRAG_NECESSARIO = 50;
+
+const TRAJE_PACKAGES = [
+  { name: "Pacote de Roupas à escolha V", value: 12000, items: {
+    "Noite dos Espíritos":1, "Canções do Apogeu":1, "História Maravilhosa":1, "Status Rebelde":1,
+    "Guerreiro do Gelo":1, "Viagem Fantástica":1, "Flores do Meio-Outono":1, "Festival de Inverno":1,
+    "Montanhas e Mar":1, "Samurai Tecnológico":1, "Iluminação Comemorativa":1 } },
+];
+
+const trajeIndex = {};
+TRAJE_PACKAGES.forEach(pkg => {
+  Object.entries(pkg.items).forEach(([traje, qty]) => {
+    if (!trajeIndex[traje]) trajeIndex[traje] = [];
+    trajeIndex[traje].push({ pacote: pkg.name, qtd: qty, custo: pkg.value / qty });
+  });
+});
+
+const trajeNames = Object.keys(trajeIndex).sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+const trajeSelectEl = document.getElementById('trajeSelect');
+const trajeSearchEl = document.getElementById('searchTraje');
+
+function populateTrajeSelect(filter){
+  filter = filter || '';
+  const f = filter.trim().toLowerCase();
+  const list = f ? trajeNames.filter(n => n.toLowerCase().includes(f)) : trajeNames;
+  trajeSelectEl.innerHTML = '<option value="">-- selecione --</option>' +
+    list.map(n => '<option value="'+n.replace(/"/g,'&quot;')+'">'+n+'</option>').join('');
+}
+populateTrajeSelect();
+
+trajeSearchEl.addEventListener('input', () => populateTrajeSelect(trajeSearchEl.value));
+
+trajeSelectEl.addEventListener('change', () => {
+  const traje = trajeSelectEl.value;
+  const resultCard = document.getElementById('resultCardTraje');
+  const emptyState = document.getElementById('emptyStateTraje');
+  if (!traje) { resultCard.style.display='none'; emptyState.style.display='block'; return; }
+
+  const rows = trajeIndex[traje].slice().sort((a,b)=>a.custo-b.custo);
+  const minCusto = rows[0].custo;
+
+  document.getElementById('resultTitleTraje').textContent = traje;
+  document.getElementById('resultSubTraje').textContent = 'Encontrado em ' + rows.length + ' pacote(s)';
+
+  document.getElementById('resultBodyTraje').innerHTML = rows.map(r =>
+    '<tr class="'+(r.custo===minCusto ? 'best' : '')+'">' +
+      '<td>'+r.pacote+(r.custo===minCusto ? ' <span class="badge">MELHOR</span>' : '')+'</td>' +
+      '<td>'+r.qtd+'</td>' +
+      '<td>'+fmt(r.custo)+'</td>' +
+      '<td>'+fmt(r.custo*TRAJE_FRAG_NECESSARIO)+'</td>' +
+    '</tr>').join('');
+
+  resultCard.style.display='block';
+  emptyState.style.display='none';
+});
+
+// ---- dados e lógica de invocações ----
+const INVOCACOES = {
+  "Vermelha": {
+    total: 25000, frag: 100,
+    fontes: [
+      { pacote: "2026 Pacote de Fukurokumaru V", qtd: 5, valor: 5*PF },
+      { pacote: "2026 Pacote de Fukurokumaru III", qtd: 5, valor: 5*PF },
+      { pacote: "2026 Pacote de Fukurokumaru II", qtd: 5, valor: 5*PF },
+      { pacote: "Pacote de Ranking de Flores/Girassol III", qtd: 10, valor: 10*PF },
+      { pacote: "Pacote de Ranking de Flores/Girassol II", qtd: 10, valor: 10*PF },
+      { pacote: "Pacote de Escolha da Lista de Flores", qtd: 10, valor: 12*PF },
+      { pacote: "Pacote de Invocações e Ninjas à escolha III", qtd: 5, valor: 4*PF },
+      { pacote: "Pacote de Ninjas Valiosos à escolha 2026", qtd: 4, valor: 4*PF },
+    ]
+  },
+  "Dourada": {
+    total: 20000, frag: 80,
+    fontes: [
+      { pacote: "Pacote de Retorno de Fukurokumaru 2026 I (Rashomon Triplo)", qtd: 1, valor: 1*PF },
+    ]
+  },
+  "Normal": {
+    total: 12000, frag: 50,
+    fontes: []
+  }
+};
+
+const invocSections = document.getElementById('invocSections');
+let invocHtml = '';
+Object.entries(INVOCACOES).forEach(([tier, data]) => {
+  const rows = data.fontes.map(f => ({ pacote: f.pacote, qtd: f.qtd, custo: f.valor / f.qtd }))
+                           .sort((a,b) => a.custo - b.custo);
+  const minCusto = rows.length ? rows[0].custo : null;
+
+  invocHtml += '<div class="card">' +
+    '<div style="font-size:16px;font-weight:700;font-family:\'Baloo 2\',sans-serif;margin-bottom:2px;">Invocação ' + tier + '</div>' +
+    '<div style="color:var(--muted);font-size:13px;margin-bottom:10px;">Custo de referência: ' + fmt(data.total) + ' Cupons no total · ' + data.frag + ' fragmentos pra sintetizar (≈ ' + fmt(data.total/data.frag) + ' Cupons/fragmento)</div>';
+
+  if (!rows.length) {
+    invocHtml += '<div class="empty" style="padding:14px 0;">Ainda sem pacotes confirmados pra essa invocação — usando só o valor de referência.</div>';
+  } else {
+    invocHtml += '<table><thead><tr><th>Pacote</th><th>Fragmentos</th><th>Custo/fragmento</th><th>Custo total (' + data.frag + ' frag)</th></tr></thead><tbody>' +
+      rows.map(r => '<tr class="'+(r.custo===minCusto ? 'best' : '')+'">' +
+        '<td>'+r.pacote+(r.custo===minCusto ? ' <span class="badge">MELHOR</span>' : '')+'</td>' +
+        '<td>'+r.qtd+'</td>' +
+        '<td>'+fmt(r.custo)+'</td>' +
+        '<td>'+fmt(r.custo*data.frag)+'</td>' +
+      '</tr>').join('') +
+      '</tbody></table>';
+  }
+  invocHtml += '</div>';
+});
+invocSections.innerHTML = invocHtml;
+</script>
+</body>
+</html>
