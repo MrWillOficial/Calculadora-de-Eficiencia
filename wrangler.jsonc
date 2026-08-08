@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/wrangler.json",
-  "name": "a-wpg-project",
+ "name": "naruto-planner-wpg"
   "compatibility_date": "2026-08-08",
   "assets": {
     "directory": "./public",
